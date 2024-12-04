@@ -1,0 +1,79 @@
+[
+    {
+        "name": "Start",
+        "id": 1,
+        "elements": [
+            {
+                "name": "start",
+                "type": "button",
+                "text": "Start",
+                "onclick": {
+                    "action": "changePage",
+                    "page": "Game"
+                }
+            },
+            {
+                "name": "settings",
+                "type": "button",
+                "text": "Settings",
+                "onclick": {
+                    "action": "changePage",
+                    "page": 2
+                }
+            },
+            {
+                "name": "highscore",
+                "type": "button",
+                "text": "Highscore"
+            }
+        ]
+    },
+    {
+        "name": "Settings",
+        "id": 2,
+        "elements": [
+            {
+                "name": "rows",
+                "type": "number",
+                "text": "Rows",
+                "data": {
+                    "min": 1,
+                    "max": 30,
+                    "value": 10
+                }
+            },
+            {
+                "name": "cols",
+                "type": "number",
+                "text": "Cols",
+                "data": {
+                    "min": 1,
+                    "max": 30,
+                    "value": 10
+                }
+            },
+            {
+                "name": "mines",
+                "type": "range",
+                "text": "Mines",
+                "data": {
+                    "fromMin": 0,
+                    "fromMax": 33,
+                    "fromValue": 5,
+                    "toMin": 0,
+                    "toMax": 33,
+                    "toValue": 15
+                }
+            },
+            {
+                "name": "back",
+                "type": "button",
+                "text": "Back",
+                "onclick": {
+                    "action": "changePage",
+                    "page": 1
+                }
+            }
+        ]
+    }
+]
