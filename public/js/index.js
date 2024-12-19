@@ -24,7 +24,7 @@ let board_width = window.innerWidth - window.innerWidth / 25; // Specify board w
 let max_board_height =
     window.innerHeight -
     document.getElementById('header').offsetHeight -
-    12 * rem; // Specify maximum board height in pixels
+    8 * rem; // Specify maximum board height in pixels
 let cell_size = sprites_data[sprites_num].px;
 let cell_padding = 1;
 let cell_magnify = board_width / (cols_amt * (cell_size + cell_padding));
