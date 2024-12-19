@@ -745,6 +745,18 @@ video {
   line-height: 1;
 }
 
+.text-\[20vmin\] {
+  font-size: 20vmin;
+}
+
+.text-\[5vmin\] {
+  font-size: 5vmin;
+}
+
+.text-\[8vmin\] {
+  font-size: 8vmin;
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
