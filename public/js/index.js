@@ -19,8 +19,12 @@ let mines_distribution_factor = 0.5; //the bigger the number, the more spread ou
 let poisson_disk_sampling_max_attempts = 1000;
 let mines_safe_radius = 1;
 
-let board_width = 800; // Specify board width in pixels
-let max_board_height = 400; // Specify maximum board height in pixels
+let rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+let board_width = window.innerWidth - 8 * rem; // Specify board width in pixels
+let max_board_height =
+    window.innerHeight -
+    document.getElementById('header').offsetHeight -
+    12 * rem; // Specify maximum board height in pixels
 let cell_size = sprites_data[sprites_num].px;
 let cell_padding = 1;
 let cell_magnify = board_width / (cols_amt * (cell_size + cell_padding));
