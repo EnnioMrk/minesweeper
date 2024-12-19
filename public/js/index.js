@@ -20,7 +20,7 @@ let poisson_disk_sampling_max_attempts = 1000;
 let mines_safe_radius = 1;
 
 let rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-let board_width = window.innerWidth - 8 * rem; // Specify board width in pixels
+let board_width = window.innerWidth - window.innerWidth / 25; // Specify board width in pixels
 let max_board_height =
     window.innerHeight -
     document.getElementById('header').offsetHeight -
