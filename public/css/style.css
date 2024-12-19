@@ -785,6 +785,14 @@ video {
   font-size: 8vmin;
 }
 
+.text-\[7vmin\] {
+  font-size: 7vmin;
+}
+
+.text-\[7\.5vmin\] {
+  font-size: 7.5vmin;
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
