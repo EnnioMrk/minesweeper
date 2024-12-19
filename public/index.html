@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="/js/lib/cv_helper.js"></script>
+        <script src="/js/lib/ui_helper.js"></script>
+        <script src="/js/classes.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/js/index.js" type="module" defer></script>
+        <script src="/ui/scripts.js" defer></script>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@sweetalert2/themes@5.0.18/dark/dark.css"
+        />
+        <link rel="stylesheet" href="/css/style.css" async />
+        <title>MINESWEEPER</title>
+    </head>
+    <body class="w-screen h-screen overflow-hidden">
+        <div class="w-full h-screen bg-zinc-900" id="mainWrapper">
+            <div
+                id="header"
+                class="absolute w-full z-20 p-8 flex justify-center items-center"
+            >
+                <div class="flex flex-col justify-center items-center">
+                    <h1 id="heading" class="text-zinc-200 text-5xl">
+                        MINESWEEPER
+                    </h1>
+                    <div
+                        class="mt-4 justify-center items-center text-white hidden"
+                        id="timer"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-8"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                        </svg>
+                        <div>
+                            <p class="ml-4">
+                                <span id="timerMinutes">0</span>:<span
+                                    id="timerSeconds"
+                                    >00</span
+                                >:<span id="timerMilliseconds">00</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="gameWrapper" class="hidden">
+                <canvas id="game" class="absolute z-10"
+                    >Your browser does not support canvas elements.</canvas
+                >
+                <button
+                    id="backButtonGame"
+                    class="bg-zinc-700 p-4 rounded-lg text-zinc-200 text-2xl absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+                >
+                    BACK
+                </button>
+            </div>
+            <div
+                id="highscoresWrapper"
+                class="hidden h-full pt-32 flex flex-col items-center"
+            >
+                <table class="table-auto w-full text-zinc-200 mt-4">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2">Rank</th>
+                            <th class="px-4 py-2">Name</th>
+                            <th class="px-4 py-2">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="highscoresTableBody">
+                        <!-- Highscore entries will be inserted here -->
+                    </tbody>
+                </table>
+                <button
+                    id="backButtonHighscores"
+                    class="bg-zinc-700 p-4 rounded-lg text-zinc-200 text-2xl absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+                >
+                    BACK
+                </button>
+            </div>
+            <template id="highscoreTemplate">
+                <tr>
+                    <td class="px-4 py-2 text-center rank"></td>
+                    <td class="px-4 py-2 text-center name"></td>
+                    <td class="px-4 py-2 text-center score"></td>
+                </tr>
+            </template>
+        </div>
+    </body>
+</html>
