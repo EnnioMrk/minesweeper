@@ -125,10 +125,12 @@ class cvh_game {
                 this.bgColor = color;
             },
         };
+        this.canvasRect = this.canvas.getBoundingClientRect();
         //add resize event listener
         window.addEventListener('resize', () => {
             this.canvas.width = w || window.innerWidth;
             this.canvas.height = h || window.innerHeight;
+            this.canvasRect = this.canvas.getBoundingClientRect();
         });
     }
     clear_canvas() {
@@ -269,14 +271,20 @@ class cvh_image extends cvh_object {
     }
 
     isInBounds(x, y) {
+        const canvasRect = this.om.game.canvas.getBoundingClientRect();
+        const scaleX = this.om.game.canvas.width / canvasRect.width;
+        const scaleY = this.om.game.canvas.height / canvasRect.height;
+        const canvasX = (x - canvasRect.left) * scaleX;
+        const canvasY = (y - canvasRect.top) * scaleY;
         if (
-            x >= this.x &&
-            x <= this.x + this.asset.width * this.magnify &&
-            y >= this.y &&
-            y <= this.y + this.asset.height * this.magnify
+            canvasX >= this.x &&
+            canvasX <= this.x + this.asset.width * this.magnify &&
+            canvasY >= this.y &&
+            canvasY <= this.y + this.asset.height * this.magnify
         ) {
             return true;
         }
+        return false;
     }
 }
 
@@ -346,6 +354,11 @@ class cvh_polygon extends cvh_shape {
         ];
     }
     isInBounds(x, y) {
+        const canvasRect = this.om.game.canvas.getBoundingClientRect();
+        const scaleX = this.om.game.canvas.width / canvasRect.width;
+        const scaleY = this.om.game.canvas.height / canvasRect.height;
+        const canvasX = (x - canvasRect.left) * scaleX;
+        const canvasY = (y - canvasRect.top) * scaleY;
         //check if point is inside polygon
         let inside = false;
         let x1, y1, x2, y2;
@@ -357,12 +370,14 @@ class cvh_polygon extends cvh_shape {
         for (let i = 1; i <= n; i++) {
             x2 = p[i % n][0];
             y2 = p[i % n][1];
-            if (y > Math.min(y1, y2)) {
-                if (y <= Math.max(y1, y2)) {
-                    if (x <= Math.max(x1, x2)) {
+            if (canvasY > Math.min(y1, y2)) {
+                if (canvasY <= Math.max(y1, y2)) {
+                    if (canvasX <= Math.max(x1, x2)) {
                         if (y1 != y2) {
-                            xinters = ((y - y1) * (x2 - x1)) / (y2 - y1) + x1;
-                            if (x1 == x2 || x <= xinters) inside = !inside;
+                            xinters =
+                                ((canvasY - y1) * (x2 - x1)) / (y2 - y1) + x1;
+                            if (x1 == x2 || canvasX <= xinters)
+                                inside = !inside;
                         }
                     }
                 }
@@ -430,11 +445,16 @@ class cvh_rectangle extends cvh_shape {
     }
 
     isInBounds(x, y) {
+        const canvasRect = this.om.game.canvas.getBoundingClientRect();
+        const scaleX = this.om.game.canvas.width / canvasRect.width;
+        const scaleY = this.om.game.canvas.height / canvasRect.height;
+        const canvasX = (x - canvasRect.left) * scaleX;
+        const canvasY = (y - canvasRect.top) * scaleY;
         if (
-            x >= this.x &&
-            x <= this.x + this.w &&
-            y >= this.y &&
-            y <= this.y + this.h
+            canvasX >= this.x &&
+            canvasX <= this.x + this.w &&
+            canvasY >= this.y &&
+            canvasY <= this.y + this.h
         ) {
             return true;
         }
@@ -467,8 +487,13 @@ class cvh_circle extends cvh_shape {
         ];
     }
     isInBounds(x, y) {
-        let dx = x - this.x;
-        let dy = y - this.y;
+        const canvasRect = this.om.game.canvas.getBoundingClientRect();
+        const scaleX = this.om.game.canvas.width / canvasRect.width;
+        const scaleY = this.om.game.canvas.height / canvasRect.height;
+        const canvasX = (x - canvasRect.left) * scaleX;
+        const canvasY = (y - canvasRect.top) * scaleY;
+        let dx = canvasX - this.x;
+        let dy = canvasY - this.y;
         return dx * dx + dy * dy <= this.r * this.r;
     }
     draw(ctx) {
