@@ -24,7 +24,7 @@ let board_width = window.innerWidth - window.innerWidth / 25; // Specify board w
 let max_board_height =
     window.innerHeight -
     document.getElementById('header').offsetHeight -
-    8 * rem; // Specify maximum board height in pixels
+    11 * rem; // Specify maximum board height in pixels
 let cell_size = sprites_data[sprites_num].px;
 let cell_padding = 1;
 let cell_magnify = board_width / (cols_amt * (cell_size + cell_padding));
@@ -35,11 +35,18 @@ let display_board_height = board_height;
 let speed_timer = new timer();
 
 function recalculateMagnification() {
+    board_width = window.innerWidth - window.innerWidth / 25;
+    max_board_height =
+        window.innerHeight -
+        document.getElementById('header').offsetHeight -
+        11 * rem;
     cell_magnify = board_width / (cols_amt * (cell_size + cell_padding));
     board_height = rows_amt * (cell_size + cell_padding) * cell_magnify;
     display_board_width = board_width;
     display_board_height = board_height;
+    console.log(board_height, max_board_height);
     if (board_height > max_board_height) {
+        console.log('Board too high, resizing');
         display_board_height = max_board_height;
         cell_magnify =
             display_board_height / (rows_amt * (cell_size + cell_padding));
@@ -47,6 +54,7 @@ function recalculateMagnification() {
             cols_amt * (cell_size + cell_padding) * cell_magnify;
     }
 }
+recalculateMagnification();
 
 // Add resize listener after game creation
 window.addEventListener('resize', recalculateMagnification);
@@ -81,9 +89,18 @@ const highscoresWrapper = document.getElementById('highscoresWrapper');
 const heading = document.getElementById('heading');
 const mainWrapper = document.getElementById('mainWrapper');
 
-let game = new cvh_game(gameCanvas, [window.innerWidth, window.innerHeight], {
-    backgroundColor: 'rgba(255, 255, 255, 0)',
-});
+let game = new cvh_game(
+    gameCanvas,
+    [
+        () => window.innerWidth,
+        () => {
+            return (window.innerHeight / 10) * 9;
+        },
+    ],
+    {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+    }
+);
 
 om = new cvh_object_manager(game);
 //game.start();
@@ -331,7 +348,9 @@ let boardFill = false; //'#ccc';
 let boardBorder = false; //'#eee';
 let board = om.create.rectangle(
     () => window.innerWidth / 2 - display_board_width / 2,
-    () => window.innerHeight / 2 - display_board_height / 2,
+    () =>
+        document.getElementById('header').offsetHeight -
+        window.innerHeight / 10,
     () => display_board_width,
     () => display_board_height,
     { fill: boardFill, border: { color: boardBorder } }

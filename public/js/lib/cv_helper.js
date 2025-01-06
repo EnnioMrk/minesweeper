@@ -111,8 +111,8 @@ class assetLoader {
 }
 class cvh_game {
     constructor(canvas, [w, h], opt) {
-        canvas.width = w || window.innerWidth;
-        canvas.height = h || window.innerHeight;
+        canvas.width = w() || window.innerWidth;
+        canvas.height = h() || window.innerHeight;
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.ctx.imageSmoothingEnabled = false;
@@ -128,8 +128,9 @@ class cvh_game {
         this.canvasRect = this.canvas.getBoundingClientRect();
         //add resize event listener
         window.addEventListener('resize', () => {
-            this.canvas.width = w || window.innerWidth;
-            this.canvas.height = h || window.innerHeight;
+            this.canvas.width = w() || window.innerWidth;
+            this.canvas.height = h() || window.innerHeight;
+            //console.log(this.canvas.width, this.canvas.height);
             this.canvasRect = this.canvas.getBoundingClientRect();
         });
     }
