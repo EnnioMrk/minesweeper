@@ -10,8 +10,8 @@ let sprites_num = 1;
 
 //(async () => {
 // #region config
-let rows_amt = 16;
-let cols_amt = 16;
+let rows_amt = 10;
+let cols_amt = 10;
 let mines_min = 15;
 let mines_max = 25;
 let mines_amt;
@@ -21,10 +21,7 @@ let mines_safe_radius = 1;
 
 let rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 let board_width = window.innerWidth - window.innerWidth / 25; // Specify board width in pixels
-let max_board_height =
-    window.innerHeight -
-    document.getElementById('header').offsetHeight -
-    11 * rem; // Specify maximum board height in pixels
+let max_board_height; // Specify maximum board height in pixels
 let cell_size = sprites_data[sprites_num].px;
 let cell_padding = 1;
 let cell_magnify = board_width / (cols_amt * (cell_size + cell_padding));
@@ -39,7 +36,7 @@ function recalculateMagnification() {
     max_board_height =
         window.innerHeight -
         document.getElementById('header').offsetHeight -
-        11 * rem;
+        12 * rem;
     cell_magnify = board_width / (cols_amt * (cell_size + cell_padding));
     board_height = rows_amt * (cell_size + cell_padding) * cell_magnify;
     display_board_width = board_width;
@@ -91,12 +88,7 @@ const mainWrapper = document.getElementById('mainWrapper');
 
 let game = new cvh_game(
     gameCanvas,
-    [
-        () => window.innerWidth,
-        () => {
-            return (window.innerHeight / 10) * 9;
-        },
-    ],
+    [() => window.innerWidth, () => (window.innerHeight / 10) * 9],
     {
         backgroundColor: 'rgba(255, 255, 255, 0)',
     }
@@ -104,6 +96,8 @@ let game = new cvh_game(
 
 om = new cvh_object_manager(game);
 //game.start();
+
+//draw sizing rectangles at the left side of the canvas displaying 1rem, header height
 
 om.createClickListener();
 
@@ -407,7 +401,12 @@ ms_empty_init();
 
 // #region functions
 function uncover_cell(cell_sprite) {
-    if (cell_sprite.cell.uncovered || cell_sprite.cell.flagged) return;
+    if (
+        cell_sprite.cell.uncovered ||
+        cell_sprite.cell.flagged ||
+        cell_sprite.cell.mine
+    )
+        return;
     cell_sprite.cell.uncovered = true;
     if (cell_sprite.cell.neighbors > 0) {
         cell_sprite.asset = a_numbers[cell_sprite.cell.neighbors - 1];
@@ -420,19 +419,26 @@ function uncover_cell(cell_sprite) {
 
 function flood_uncover(cell_sprite, i = 0) {
     if (cell_sprite.cell.uncovered || cell_sprite.cell.flagged) return;
+    console.log(cell_sprite);
     if (cell_sprite.cell.neighbors > 0) {
         uncover_cell(cell_sprite);
+        console.log(
+            `Uncovering cell ${cell_sprite.cell.x}, ${cell_sprite.cell.y}`
+        );
         return;
     } else {
         uncover_cell(cell_sprite);
+        console.log(
+            `Uncovering all cells around ${cell_sprite.cell.x}, ${cell_sprite.cell.y}`
+        );
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
                 if (x == 0 && y == 0) continue;
                 if (
                     cell_sprite.cell.x + x < 0 ||
-                    cell_sprite.cell.x + x >= cols_amt ||
+                    cell_sprite.cell.x + x >= rows_amt ||
                     cell_sprite.cell.y + y < 0 ||
-                    cell_sprite.cell.y + y >= rows_amt
+                    cell_sprite.cell.y + y >= cols_amt
                 ) {
                     continue;
                 }
@@ -446,6 +452,7 @@ function flood_uncover(cell_sprite, i = 0) {
 }
 
 var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
+    console.log(`%cCell clicked ${cell.x}, ${cell.y}`, 'color: red');
     if (rightClick) {
         if (cell.uncovered) return;
         cell.flagged = !cell.flagged;
@@ -459,6 +466,7 @@ var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
         return;
     }
     if (cell.uncovered) {
+        console.log(cell.neighbors);
         if (cell.neighbors > 0) {
             let flags = 0;
             for (let x = -1; x <= 1; x++) {
@@ -466,9 +474,9 @@ var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
                     if (x == 0 && y == 0) continue;
                     if (
                         cell.x + x < 0 ||
-                        cell.x + x >= cols_amt ||
+                        cell.x + x >= rows_amt ||
                         cell.y + y < 0 ||
-                        cell.y + y >= rows_amt
+                        cell.y + y >= cols_amt
                     ) {
                         continue;
                     }
@@ -477,6 +485,7 @@ var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
                     }
                 }
             }
+            console.log(flags);
             //Check if there are as many flags as neighbors
             if (flags == cell.neighbors) {
                 for (let x = -1; x <= 1; x++) {
@@ -484,18 +493,27 @@ var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
                         if (x == 0 && y == 0) continue;
                         if (
                             cell.x + x < 0 ||
-                            cell.x + x >= cols_amt ||
+                            cell.x + x >= rows_amt ||
                             cell.y + y < 0 ||
-                            cell.y + y >= rows_amt
+                            cell.y + y >= cols_amt
                         ) {
                             continue;
                         }
-                        if (!cells[cell.x + x][cell.y + y].cell.flagged) {
+                        if (cells[cell.x + x][cell.y + y].cell.flagged)
+                            continue;
+                        if (cells[cell.x + x][cell.y + y].cell.mine) {
+                            cells[cell.x + x][cell.y + y].asset = a_bomb;
+                            gameOver();
+                            continue;
+                        }
+                        if (!cells[cell.x + x][cell.y + y].cell.uncovered) {
                             if (
                                 cells[cell.x + x][cell.y + y].cell.neighbors > 0
                             ) {
                                 uncover_cell(cells[cell.x + x][cell.y + y]);
                             } else {
+                                //log in red uncovering around
+
                                 flood_uncover(cells[cell.x + x][cell.y + y]);
                             }
                         }

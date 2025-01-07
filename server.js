@@ -61,6 +61,8 @@ app.post('/highscore', (req, res) => {
 app.get('/highscores', (req, res) => {
     const stmt = db.prepare('SELECT * FROM highscores');
     const highScores = stmt.all();
+    //sort
+    highScores.sort((a, b) => b.score - a.score);
     res.json(highScores);
 });
 
