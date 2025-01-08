@@ -23,7 +23,26 @@ db.run(`
 `);
 
 function calculateScore(speed, columns, rows, mines) {
-    return Math.floor(((columns * rows * 1000) / (speed + mines)) * 10);
+    // Calculate board size and mine density
+    const boardSize = columns * rows;
+    const mineDensity = mines / boardSize;
+
+    // Board size factor (exponential growth)
+    const boardFactor = Math.pow(boardSize / 64, 1.5); // 64 is standard 8x8 board
+
+    // Mine density factor (exponential decrease for lower density)
+    const mineFactor = Math.pow(0.7, (0.3 - mineDensity) * 10);
+
+    // Speed factor (linear decrease)
+    const speedFactor = Math.max(0, 1 - speed / 5000);
+
+    // Calculate final score
+    const baseScore = 1000;
+    const finalScore = Math.round(
+        baseScore * boardFactor * mineFactor * (1 + speedFactor)
+    );
+
+    return finalScore;
 }
 
 app.post('/highscore', (req, res) => {

@@ -46,7 +46,7 @@
                 "type": "number",
                 "text": "Rows",
                 "data": {
-                    "min": 1,
+                    "min": 5,
                     "max": 30,
                     "value": 10
                 }
@@ -56,7 +56,7 @@
                 "type": "number",
                 "text": "Cols",
                 "data": {
-                    "min": 1,
+                    "min": 5,
                     "max": 30,
                     "value": 10
                 }
@@ -66,10 +66,10 @@
                 "type": "range",
                 "text": "Mines",
                 "data": {
-                    "fromMin": 0,
+                    "fromMin": 8,
                     "fromMax": 33,
                     "fromValue": 5,
-                    "toMin": 0,
+                    "toMin": 8,
                     "toMax": 33,
                     "toValue": 15
                 }

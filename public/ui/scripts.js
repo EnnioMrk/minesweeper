@@ -1,4 +1,4 @@
-/* exported uih_scripts_init */
+/* eslint-disable no-unused-vars */
 function controlFromSlider(fromSlider, toSlider, fromInput) {
     const [from, to] = getParsed(fromSlider, toSlider);
     fillSlider(fromSlider, toSlider, '#C6C6C6', '#25daa5', toSlider);
@@ -52,6 +52,20 @@ function setToggleAccessible(toSlider) {
     }
 }
 
+function enforceMinMax(el) {
+    if (el.value == '') {
+        el.value = el.min;
+    } else {
+        if (parseInt(el.value) < parseInt(el.min)) {
+            el.value = el.min;
+        }
+        if (parseInt(el.value) > parseInt(el.max)) {
+            el.value = el.max;
+        }
+    }
+    el.dispatchEvent(new Event('input'));
+}
+
 function uih_scripts_init() {
     Array.from(document.querySelectorAll('.rangeSlider')).forEach((slider) => {
         const fromSlider = slider.querySelector('.fromSlider');
@@ -65,5 +79,8 @@ function uih_scripts_init() {
         fromSlider.oninput = () =>
             controlFromSlider(fromSlider, toSlider, fromInput);
         toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
+    });
+    Array.from(document.querySelectorAll('.numberInput')).forEach((input) => {
+        input.addEventListener('focusout', () => enforceMinMax(input));
     });
 }
