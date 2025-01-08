@@ -1,5 +1,6 @@
-/*global cvh_game, cvh_object_manager, assetLoader, uih_manager, Swal, timer */
+/*global cvh_game, cvh_object_manager, assetLoader, uih_manager, Swal, timer, log */
 /*exported pageBack */
+
 let om;
 
 let sprites_data = [
@@ -41,9 +42,8 @@ function recalculateMagnification() {
     board_height = rows_amt * (cell_size + cell_padding) * cell_magnify;
     display_board_width = board_width;
     display_board_height = board_height;
-    console.log(board_height, max_board_height);
+
     if (board_height > max_board_height) {
-        console.log('Board too high, resizing');
         display_board_height = max_board_height;
         cell_magnify =
             display_board_height / (rows_amt * (cell_size + cell_padding));
@@ -78,7 +78,6 @@ function createCellSprite(i, j, clickHandler) {
         onRightClick: () => clickHandler(true),
     });
 }
-// #endregion
 // #region setup
 const gameCanvas = document.getElementById('game');
 const gameWrapper = document.getElementById('gameWrapper');
@@ -105,7 +104,6 @@ let sprites_blob = await fetch(sprites_data[sprites_num].url).then((response) =>
     response.blob()
 );
 let asset_loader = new assetLoader(sprites_blob, sprites_data[sprites_num].px);
-console.log(asset_loader);
 await asset_loader.loadAll();
 
 let a_numbers = asset_loader.assets.slice(0, 8);
@@ -143,27 +141,21 @@ uim.register_page({
 });
 await uim.load_ui(ui_config);
 uim.register_var_watcher('rows', (v, value) => {
-    console.log('Rows changed to: ' + value);
     rows_amt = parseInt(value);
     recalculateMagnification();
-    //ms_empty_init();
 });
 uim.register_var_watcher('cols', (v, value) => {
-    console.log('Cols changed to: ' + value);
     cols_amt = parseInt(value);
     recalculateMagnification();
-    //ms_empty_init();
 });
 uim.set_var('rows', rows_amt);
 uim.set_var('cols', cols_amt);
 uim.register_var_watcher('mines', (v, value) => {
     switch (v) {
         case 'from':
-            console.log('Mines min changed to: ' + value);
             mines_min = value;
             break;
         case 'to':
-            console.log('Mines max changed to: ' + value);
             mines_max = value;
             break;
     }
@@ -227,7 +219,7 @@ function ms_mines_generate_poisson_disk_sampling(i, j) {
     let mines_max_number = Math.floor(
         (mines_max / 100) * (cols_amt * rows_amt)
     );
-    console.log(`Generating ${mines_min_number} to ${mines_max_number} mines`);
+    log.game(`Generating ${mines_min_number} to ${mines_max_number} mines`);
     mines_amt =
         Math.floor(Math.random() * (mines_max_number - mines_min_number)) +
         mines_min_number;
@@ -288,7 +280,7 @@ function ms_mines_generate_poisson_disk_sampling(i, j) {
         );
     });
 
-    console.log(
+    log.game(
         `Generated ${mines_locations.length} mines, (min: ${mines_min_number}, max: ${mines_max_number}, wanted: ${mines_amt})`
     );
 }
@@ -364,7 +356,7 @@ function ms_cells_generate(x, y) {
 }
 
 function ms_empty_init() {
-    console.log(`Initializing empty board with ${rows_amt}x${cols_amt} cells`);
+    log.game(`Initializing empty board with ${rows_amt}x${cols_amt} cells`);
     om.clear('image');
     speed_timer.reset();
     //init empty board with only covered cell sprites (mines will be generated after first click)
@@ -419,18 +411,12 @@ function uncover_cell(cell_sprite) {
 
 function flood_uncover(cell_sprite, i = 0) {
     if (cell_sprite.cell.uncovered || cell_sprite.cell.flagged) return;
-    console.log(cell_sprite);
+
     if (cell_sprite.cell.neighbors > 0) {
         uncover_cell(cell_sprite);
-        console.log(
-            `Uncovering cell ${cell_sprite.cell.x}, ${cell_sprite.cell.y}`
-        );
         return;
     } else {
         uncover_cell(cell_sprite);
-        console.log(
-            `Uncovering all cells around ${cell_sprite.cell.x}, ${cell_sprite.cell.y}`
-        );
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
                 if (x == 0 && y == 0) continue;
@@ -452,7 +438,7 @@ function flood_uncover(cell_sprite, i = 0) {
 }
 
 var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
-    console.log(`%cCell clicked ${cell.x}, ${cell.y}`, 'color: red');
+    log.game(`Cell clicked at ${cell.x}, ${cell.y}`, { rightClick });
     if (rightClick) {
         if (cell.uncovered) return;
         cell.flagged = !cell.flagged;
@@ -466,7 +452,6 @@ var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
         return;
     }
     if (cell.uncovered) {
-        console.log(cell.neighbors);
         if (cell.neighbors > 0) {
             let flags = 0;
             for (let x = -1; x <= 1; x++) {
@@ -485,8 +470,6 @@ var cell_on_click = (cell, cell_sprite, i, j, rightClick) => {
                     }
                 }
             }
-            console.log(flags);
-            //Check if there are as many flags as neighbors
             if (flags == cell.neighbors) {
                 for (let x = -1; x <= 1; x++) {
                     for (let y = -1; y <= 1; y++) {
@@ -609,7 +592,7 @@ window.loadGameState = (jsonState) => {
 
         return true;
     } catch (error) {
-        console.error('Failed to load game state:', error);
+        log.error('Failed to load game state:', error);
         return false;
     }
 };
@@ -705,7 +688,7 @@ async function fetchHighscores() {
         const highscoreTemplate =
             document.getElementById('highscoreTemplate').content;
         highscoresTableBody.innerHTML = '';
-        console.log(highscores);
+        log.info('Highscores fetched successfully');
         highscores.forEach((score, index) => {
             const clone = document.importNode(highscoreTemplate, true);
             clone.querySelector('.rank').textContent = index + 1;
@@ -714,7 +697,7 @@ async function fetchHighscores() {
             highscoresTableBody.appendChild(clone);
         });
     } catch (error) {
-        console.error('Failed to fetch highscores:', error);
+        log.error('Failed to fetch highscores:', error);
     }
 }
 

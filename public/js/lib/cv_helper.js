@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+/*global log*/
+
 class clickListener {
     constructor(om) {
         this.om = om;
@@ -518,7 +520,6 @@ class cvh_object_manager {
             (acc, o) => ({
                 ...acc,
                 [o.name.slice(4)]: (...args) => {
-                    console.log(`Creating ${o.name.slice(4)}`);
                     let no = new o(this, ...args);
                     this.objects.push(no);
                     this.objects.sort((a, b) => a.z || 0 - b.z || 0);

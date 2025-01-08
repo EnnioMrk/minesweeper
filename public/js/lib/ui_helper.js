@@ -1,5 +1,6 @@
 /* exported uih_manager */
-/* global uih_scripts_init */
+/* global uih_scripts_init, log */
+
 class uih_template {
     constructor(type, content) {
         this.type = type;
@@ -52,7 +53,7 @@ class uih_manager {
     change_page(id) {
         let page = this.wrapper.querySelector(`[data-page_id="${id}"]`);
         if (!page) {
-            console.error('Page not found');
+            log.error('Page not found', { id });
             return;
         }
         this.wrapper.querySelectorAll('[data-page_id]').forEach((p) => {
@@ -115,7 +116,7 @@ class uih_manager {
                     (t) => t.type === element.type
                 );
                 if (!template) {
-                    console.error('Template not found');
+                    log.error('Template not found');
                     return;
                 }
                 const serializer = new XMLSerializer();
@@ -156,9 +157,7 @@ class uih_manager {
                         .getAttribute('var')
                         .split('-')[1];
 
-                    console.log(
-                        `Listening for ${listen_method} on ${var_name}`
-                    );
+                    log.debug(`Listening for ${listen_method} on ${var_name}`);
                     //add event listener for change
                     this.vars.push({
                         element_name: element.name,
@@ -203,7 +202,7 @@ class uih_manager {
             );
         }
         if (!var_element) {
-            console.error('Var not found');
+            log.error('Var not found');
             return;
         }
         var_element.element.value = value;
