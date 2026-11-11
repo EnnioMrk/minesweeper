@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "minesweeper",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-08-13",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "minesweeper-highscores",
+      "database_id": "eda50b40-c2a3-4a61-a25f-3b674fc310b8"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "minesweeper.ennio.vip",
+      "custom_domain": true
+    }
+  ]
+}
